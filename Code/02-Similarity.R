@@ -27,6 +27,7 @@ S0_add <- data.frame(taxon = taxonomy$taxon[uid],
                      nonresource = '',
                      consumer = '',
                      nonconsumer = '',
+                     row.names = taxonomy$taxon[uid],
                      stringsAsFactors = F) %>%
           as.matrix()
 
