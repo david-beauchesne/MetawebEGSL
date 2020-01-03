@@ -47,5 +47,4 @@ metaweb <- iEat_to_foodWeb(metaweb)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # 6. EXPORT METAWEB
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
-saveRDS(metaWeb, file = './RData/metaWeb.rds')
+save(metaweb, file = './Data/Metaweb/metaweb.RData')
