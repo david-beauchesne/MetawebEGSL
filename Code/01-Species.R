@@ -137,4 +137,4 @@ taxonomy <- taxonomy[order(taxonomy$taxon), ]
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # 6. EXPORT
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-save(taxonomy, file = './Data/Taxonomy/TaxonomyEGSL.rds')
+save(taxonomy, file = './Data/Taxonomy/TaxonomyEGSL.RData')
