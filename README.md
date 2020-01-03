@@ -4,7 +4,7 @@ A description of the metaweb of the species in the Estuary and Gulf of St. Lawre
 
 ## Species interactions
 
-Species binary interactions are evaluated using an instance-based machine learning algorithm using species similarity to inform predictions (Beauchesne *et al* 2016; Life & Environment, 66(3-4): 333-342). Functions are available through the [`iEat`] (https://github.com/david-beauchesne/iEat) package.
+Species binary interactions are evaluated using an instance-based machine learning algorithm using species similarity to inform predictions (Beauchesne *et al* 2016; Life & Environment, 66(3-4): 333-342). Functions are available through the [`iEat`](https://github.com/david-beauchesne/iEat) package.
 
 ## Species list
 
