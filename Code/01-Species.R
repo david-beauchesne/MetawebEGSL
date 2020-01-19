@@ -134,7 +134,152 @@ taxonomy <- rbind(taxonomy, taxo)
 # Sort data
 taxonomy <- taxonomy[order(taxonomy$taxon), ]
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-# 6. EXPORT
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 save(taxonomy, file = './Data/Taxonomy/TaxonomyEGSL.RData')
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+# 6. Add zooplankton and phytoplankton as additional species
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+#         Zooplankton
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+euphausiids <- c('Meganyctiphanes norvegica', 'Thysanoessa raschii',
+                 'Thysanoessa inermis')
+
+macrozooplankton <- c('Sagitta elegans','Pseudosagitta maxima','Eukrohnia hamata',
+                      'Boreomysis artica','Mysis mixta','Erythrops erythrophthalma',
+                      'Themisto gaudichaudi','Themisto abyssorum','Themisto compressa',
+                      'Aglantha digitalis','Dimophyes arctica','Obelia','Beroe',
+                      'Clione limacina','Limacina helicina','Decapoda','Tomopteris',
+                      'Euphausiacea','Sagittoidea','Hyperiidea','Mysida','Ctenophora')
+
+mesozooplankton <- c('Calanus finmarchicus','Calanus hyperboreus','Oithona similis',
+                     'Temora longicornis','Pseudocalanus')
+
+zoo <- c(euphausiids, macrozooplankton, mesozooplankton)
+
+# Extract taxonomy of taxa that are already described in the catalog
+# Start here to make sure that there is no discrepancy with information already
+# available through the catalogue.
+spTaxo <- S0_catalog[S0_catalog[, 'taxon'] %in% zoo, c('taxon','taxonomy')] %>%
+          as.data.frame(stringsAsFactors = F)
+
+# Identify which taxa are not already included in the catalog
+missCatalog <- zoo[!zoo %in% spTaxo$taxon]
+
+# Get classification from WoRMS using 'taxize::classification()'
+spClass <- taxize::classification(missCatalog, db = 'worms')
+
+# Empty data.frame to store taxonomy
+taxo <- c('Kingdom','Phylum','Class','Order','Family','Genus','Species')
+taxoClass <- data.frame(rank = taxo, stringsAsFactors = F)
+
+# Extract taxonomy
+for(i in 1:length(missCatalog)) {
+  # Run only if there is taxonomic information available
+  if (all(!is.na(spClass[[i]]))) {
+    # Taxonomic data
+    dat <- spClass[[i]]
+
+    # Keep only required taxonomic ranks
+    dat <- dat[dat$rank %in% taxo, c('name','rank')]
+
+    # Change name of column
+    colnames(dat)[1] <- names(spClass)[i]
+
+    # Fill in taxonomy matrix
+    taxoClass <- taxoClass %>%
+                 dplyr::left_join(dat, by = 'rank')
+  }
+}
+
+# Transpose dataset
+taxoClass <- t(taxoClass)
+
+# Add column names and remove first row with ranks
+colnames(taxoClass) <- taxoClass[1, ]
+taxoClass <- taxoClass[-1,]
+
+# Transform as data.frame
+taxoClass <- as.data.frame(taxoClass, stringsAsFactors = F)
+
+# Add taxon name from species list
+taxoClass$taxon <- rownames(taxoClass)
+
+# Taxonomic classification as single column
+taxoZoo <- apply(taxoClass[, taxo], 1, paste, collapse = ' | ')
+taxoClass$taxonomy <- taxoZoo
+
+# Combine taxonomy from catalogue & worms
+uid <- c('taxon','taxonomy')
+taxoZoo <- rbind(spTaxo[, uid], taxoClass[, uid])
+
+# Export
+save(taxoZoo, file = './Data/Taxonomy/TaxonomyZooplankton.RData')
+
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+#        Phytoplankton
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+phyto <- c('Chaetoceros affinis','Chaetoceros','Fragilariopsis oceanica',
+           'Fragilariopsis cylindrus', 'Leptocylindrus minimus',
+           'Thalassiosira bioculata','Thalassiosira nordenskioeldii',
+           'Thalassiosira pacifica','Thalassiosira punctigera','Dinoflagellata',
+           'Cryptophyta','Prasinophyceae','Prymnesiophyceae','Strombidium')
+
+# Extract taxonomy of taxa that are already described in the catalog
+# Start here to make sure that there is no discrepancy with information already
+# available through the catalogue.
+spTaxo <- S0_catalog[S0_catalog[, 'taxon'] %in% phyto, c('taxon','taxonomy')] %>%
+          as.data.frame(stringsAsFactors = F)
+
+# Identify which taxa are not already included in the catalog
+missCatalog <- phyto[!phyto %in% spTaxo$taxon]
+
+# Get classification from WoRMS using 'taxize::classification()'
+spClass <- taxize::classification(missCatalog, db = 'worms')
+
+# Empty data.frame to store taxonomy
+taxo <- c('Kingdom','Phylum','Class','Order','Family','Genus','Species')
+taxoClass <- data.frame(rank = taxo, stringsAsFactors = F)
+
+# Extract taxonomy
+for(i in 1:length(missCatalog)) {
+  # Run only if there is taxonomic information available
+  if (all(!is.na(spClass[[i]]))) {
+    # Taxonomic data
+    dat <- spClass[[i]]
+
+    # Keep only required taxonomic ranks
+    dat <- dat[dat$rank %in% taxo, c('name','rank')]
+
+    # Change name of column
+    colnames(dat)[1] <- names(spClass)[i]
+
+    # Fill in taxonomy matrix
+    taxoClass <- taxoClass %>%
+                 dplyr::left_join(dat, by = 'rank')
+  }
+}
+
+# Transpose dataset
+taxoClass <- t(taxoClass)
+
+# Add column names and remove first row with ranks
+colnames(taxoClass) <- taxoClass[1, ]
+taxoClass <- taxoClass[-1,]
+
+# Transform as data.frame
+taxoClass <- as.data.frame(taxoClass, stringsAsFactors = F)
+
+# Add taxon name from species list
+taxoClass$taxon <- rownames(taxoClass)
+
+# Taxonomic classification as single column
+taxoPhyto <- apply(taxoClass[, taxo], 1, paste, collapse = ' | ')
+taxoClass$taxonomy <- taxoPhyto
+
+# Combine taxonomy from catalogue & worms
+uid <- c('taxon','taxonomy')
+taxoPhyto <- rbind(spTaxo[, uid], taxoClass[, uid])
+
+# Export
+save(taxoPhyto, file = './Data/Taxonomy/TaxonomyPhytoplankton.RData')

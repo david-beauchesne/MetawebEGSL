@@ -8,7 +8,9 @@ library(iEat)
 # 1. IMPORT SPECIES LIST AND TAXONOMY
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 load('./Data/Taxonomy/TaxonomyEGSL.RData')
-
+load('./Data/Taxonomy/TaxonomyPhytoplankton.RData')
+load('./Data/Taxonomy/TaxonomyZooplankton.RData')
+taxo <- rbind(taxonomy, taxoPhyto, taxoZoo)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # 2. IMPORT INTERACTION CATALOGUE
@@ -20,14 +22,14 @@ load('./Data/InteractionCatalogue/S0_catalog.RData')
 # 3. INSERT MISSING TAXA IN CATALOGUE
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # Missing taxa
-uid <- !taxonomy$taxon %in% S0_catalog[, 'taxon']
-S0_add <- data.frame(taxon = taxonomy$taxon[uid],
-                     taxonomy = taxonomy$taxonomy[uid],
+uid <- !taxo$taxon %in% S0_catalog[, 'taxon']
+S0_add <- data.frame(taxon = taxo$taxon[uid],
+                     taxonomy = taxo$taxonomy[uid],
                      resource = '',
                      nonresource = '',
                      consumer = '',
                      nonconsumer = '',
-                     row.names = taxonomy$taxon[uid],
+                     row.names = taxo$taxon[uid],
                      stringsAsFactors = F) %>%
           as.matrix()
 
