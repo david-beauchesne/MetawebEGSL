@@ -126,6 +126,7 @@ taxonomy <- rbind(spTaxo[, uid], taxoClass[, uid])
 uid <- missCatalog[!missCatalog %in% taxonomy$taxon]
 taxo <- data.frame(taxon = uid,
                    taxonomy = 'Animalia | Cnidaria | Hydrozoa | Leptothecata | Laodiceidae | Staurostoma | Staurostoma mertensii',
+                   row.names = 'Staurostoma mertensii',
                    stringsAsFactors = F)
 
 # Combine with rest of information
